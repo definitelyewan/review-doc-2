@@ -16,7 +16,7 @@
     const blocks = data.blocks;
     let page = $state(1);
     let size = $state(20);
-    const slicedSource = $derived((s: displayReview[]) => s.slice((page - 1) * size, page * size));
+    let slicedSource = $derived((s: displayReview[]) => s.slice((page - 1) * size, page * size));
 
 </script>
 
@@ -64,7 +64,6 @@
 
 
 {#each slicedSource(blocks) as block}
-
     <div id="reviewBox" class="w-screen relative" style="background-image: url({block.item.banner}); background-size: cover; background-position: center;">
         <!-- Gradient overlays -->
         <div class="absolute inset-0 bg-gradient-to-b dark:from-[#121212]/100 dark:to-transparent from-[#fcfcfc]/100 to-transparent"></div>

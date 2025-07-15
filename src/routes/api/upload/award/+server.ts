@@ -18,10 +18,10 @@ export async function POST ({ request }) {
 
 
     interface BodyContent {
-        id: number, //id of item
-        grant: boolean // nominee or winner
-        name: string // award name
-        year: number | undefined // year
+        item_id: number, //id of item
+        award_granted: boolean // nominee or winner
+        award_name: string // award name
+        award_year: number | undefined // year
 
 
     }
@@ -29,7 +29,7 @@ export async function POST ({ request }) {
     let bodyContent: BodyContent = await request.json();
 
 
-    if (bodyContent.id == undefined || bodyContent.grant == undefined ||bodyContent.name == undefined) {
+    if (bodyContent.item_id == undefined || bodyContent.award_granted == undefined ||bodyContent.award_name == undefined) {
         error(400, "One or more required fields missing");
     }
 
@@ -42,11 +42,11 @@ export async function POST ({ request }) {
             newId = latest[0].latest_id + 1;
         }
 
-        if (bodyContent.year == undefined) {
-            bodyContent.year = new Date().getFullYear();
+        if (bodyContent.award_year == undefined) {
+            bodyContent.award_year = new Date().getFullYear();
         }
 
-        const insert = await db.insertAward(newId, bodyContent.id, bodyContent.grant, bodyContent.name, bodyContent?.year);
+        const insert = await db.insertAward(newId, bodyContent.item_id, bodyContent.award_granted, bodyContent.award_name, bodyContent?.award_year);
 
         if (!insert.success) {
             throw new Error(insert.error);

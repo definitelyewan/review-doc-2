@@ -79,99 +79,99 @@ export async function POST ({ request }) {
     }
 
     interface BodyContent {
-        id: number, // external id
-        type: string,
-        cover: string | undefined,
-        banner: string | undefined,
-        name: string | undefined,
-        date: string | undefined
+        external_id: number, // external id
+        item_type: string,
+        item_cover_overide_url: string | undefined,
+        item_banner_overide_url: string | undefined,
+        item_name: string | undefined,
+        item_date: string | undefined
 
     }
 
     let bodyContent: BodyContent = await request.json();
 
-    if (!bodyContent.id || !bodyContent.type) {
+    if (!bodyContent.external_id || !bodyContent.item_type) {
         error(400, 'Invalid request body: Missing required fields');
     }
 
     
-    if (bodyContent.type == 'game') {
+    if (bodyContent.item_type == 'game') {
 
         // get cover hash to avoid api requests later IGDB can be kinda slow
-        if (bodyContent?.cover == undefined){
-            const igdbCoverResult = await igdb.getCoverByID(bodyContent.id);
+        if (bodyContent?.item_cover_overide_url == undefined){
+            const igdbCoverResult = await igdb.getCoverByID(bodyContent.external_id);
 
             if (igdbCoverResult.length != 0) {
-                bodyContent.cover = igdbCoverResult[0].url;
-                bodyContent.cover = bodyContent.cover?.replace('t_thumb','t_1080p');
+                bodyContent.item_cover_overide_url = igdbCoverResult[0].url;
+                bodyContent.item_cover_overide_url = bodyContent.item_cover_overide_url?.replace('t_thumb','t_1080p');
             } 
         }
 
-        if (bodyContent?.banner == undefined){
-            const igdbBannerResult = await igdb.getArtworkByID(bodyContent.id);
+        if (bodyContent?.item_banner_overide_url == undefined){
+            const igdbBannerResult = await igdb.getArtworkByID(bodyContent.external_id);
     
             if (igdbBannerResult.length != 0) {
-                bodyContent.banner = igdbBannerResult[0].url;
-                bodyContent.banner = bodyContent.banner?.replace('t_thumb','t_1080p');
+                bodyContent.item_banner_overide_url = igdbBannerResult[0].url;
+                bodyContent.item_banner_overide_url = bodyContent.item_banner_overide_url?.replace('t_thumb','t_1080p');
             }
         }
 
-        const igdbResult = await igdb.searchByID(bodyContent.id);
+        const igdbResult = await igdb.searchByID(bodyContent.external_id);
 
         // get name if its not given
-        if (bodyContent?.name == undefined) {
-            bodyContent.name = igdbResult.name;
+        if (bodyContent?.item_name == undefined) {
+            bodyContent.item_name = igdbResult.name;
         }
 
-        if (bodyContent?.date == undefined) {
-            bodyContent.date = new Date(igdbResult.first_release_date * 1000).toISOString().split('T')[0];
+        if (bodyContent?.item_date == undefined) {
+            bodyContent.item_date = new Date(igdbResult.first_release_date * 1000).toISOString().split('T')[0];
         }
 
 
-    } else if (bodyContent.type == 'tv') {
-        const tmdbResult = await tmdb.searchByID(bodyContent.id, 'tv');
+    } else if (bodyContent.item_type == 'tv') {
+        const tmdbResult = await tmdb.searchByID(bodyContent.external_id, 'tv');
 
-        if (bodyContent.name == undefined) {
-            bodyContent.name = tmdbResult.name;
+        if (bodyContent.item_name == undefined) {
+            bodyContent.item_name = tmdbResult.name;
             
         }
 
-        if (bodyContent.date == undefined) {
-            bodyContent.date = tmdbResult.first_air_date;
+        if (bodyContent.item_date == undefined) {
+            bodyContent.item_date = tmdbResult.first_air_date;
         }
 
-        if (bodyContent.cover == undefined) {
-            bodyContent.cover = 'https://image.tmdb.org/t/p/original' + String(tmdbResult.poster_path);
+        if (bodyContent.item_cover_overide_url == undefined) {
+            bodyContent.item_cover_overide_url = 'https://image.tmdb.org/t/p/original' + String(tmdbResult.poster_path);
         }
 
-        if (bodyContent.banner == undefined) {
-            bodyContent.banner = 'https://image.tmdb.org/t/p/original' + String(tmdbResult.backdrop_path);
+        if (bodyContent.item_banner_overide_url == undefined) {
+            bodyContent.item_banner_overide_url = 'https://image.tmdb.org/t/p/original' + String(tmdbResult.backdrop_path);
         }
 
 
-    } else if (bodyContent.type == 'movie') {
-        const tmdbResult = await tmdb.searchByID(bodyContent.id, 'movie');
+    } else if (bodyContent.item_type == 'movie') {
+        const tmdbResult = await tmdb.searchByID(bodyContent.external_id, 'movie');
 
-        if (bodyContent.name == undefined) {
-            bodyContent.name = tmdbResult.title;
+        if (bodyContent.item_name == undefined) {
+            bodyContent.item_name = tmdbResult.title;
         }
 
-        if (bodyContent.date == undefined) {
-            bodyContent.date = tmdbResult.release_date;
+        if (bodyContent.item_date == undefined) {
+            bodyContent.item_date = tmdbResult.release_date;
         }
 
-        if (bodyContent.cover == undefined) {
-            bodyContent.cover = 'https://image.tmdb.org/t/p/original' + String(tmdbResult.poster_path);
+        if (bodyContent.item_cover_overide_url == undefined) {
+            bodyContent.item_cover_overide_url = 'https://image.tmdb.org/t/p/original' + String(tmdbResult.poster_path);
         }
 
-        if (bodyContent.banner == undefined) {
-            bodyContent.banner = 'https://image.tmdb.org/t/p/original' + String(tmdbResult.backdrop_path);
+        if (bodyContent.item_banner_overide_url == undefined) {
+            bodyContent.item_banner_overide_url = 'https://image.tmdb.org/t/p/original' + String(tmdbResult.backdrop_path);
         }
 
     
-    }else if (bodyContent.type == 'other') {
+    }else if (bodyContent.item_type == 'other') {
 
-        if (bodyContent.banner == undefined || bodyContent.cover == undefined || bodyContent.date == undefined || bodyContent.name == undefined || bodyContent.date == undefined) {
+        if (bodyContent.item_banner_overide_url == undefined || bodyContent.item_cover_overide_url == undefined || bodyContent.item_date == undefined || bodyContent.item_name == undefined || bodyContent.item_date == undefined) {
             error(400, 'All fields are required for type other however, id will be discarded on upload');
         }
 
@@ -191,7 +191,7 @@ export async function POST ({ request }) {
         }
         
 
-        const insert = await db.insertItem(newId, bodyContent.id, bodyContent.type, bodyContent?.cover, bodyContent?.banner, bodyContent?.name, bodyContent?.date);
+        const insert = await db.insertItem(newId, bodyContent.external_id, bodyContent.item_type, bodyContent?.item_cover_overide_url, bodyContent?.item_banner_overide_url, bodyContent?.item_name, bodyContent?.item_date);
 
         if (!insert.success) {
             throw new Error("Failed insert of external item");

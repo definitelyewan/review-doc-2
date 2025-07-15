@@ -146,25 +146,25 @@
                     <hr class="mt-1 hr" />
                     <div class="mt-1 mb-1">
 
-                        {#if isDarkMode == true}
-                            <div class="prose custom-prose-dark">
-                                <div class="md:block hidden">
-                                    {@html updateHtml(md, false)}
-                                </div>
-                                <div class="block md:hidden">
-                                    {@html updateHtml(md, true)}
-                                </div>
-                            </div>
-                        {:else}
-                            <div class="prose">
-                                <div class="md:block hidden">
-                                    {@html updateHtml(md, false)}
-                                </div>
-                                <div class="block md:hidden">
-                                    {@html updateHtml(md, true)}
-                                </div>
-                            </div>
-                        {/if}
+                {#if isDarkMode == true}
+                    <div class="prose custom-prose-dark max-w-none">
+                        <div class="md:block hidden">
+                            {@html updateHtml(md, false)}
+                        </div>
+                        <div class="block md:hidden">
+                            {@html updateHtml(md, true)}
+                        </div>
+                    </div>
+                {:else}
+                    <div class="prose max-w-none">
+                        <div class="md:block hidden">
+                            {@html updateHtml(md, false)}
+                        </div>
+                        <div class="block md:hidden">
+                            {@html updateHtml(md, true)}
+                        </div>
+                    </div>
+                {/if}
                     </div>
 
                 {/if}

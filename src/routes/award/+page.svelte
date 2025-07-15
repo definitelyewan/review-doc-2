@@ -23,7 +23,7 @@
 
 </script>
 
-<title>Awards</title>
+<title>Review Doc - Awards</title>
 
 <div class="md:mx-32 mx-4 mt-2 mb-2">
     <Accordion value={yearValue} onValueChange={(e) => (yearValue = e.value)} multiple>

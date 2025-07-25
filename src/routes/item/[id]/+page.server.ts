@@ -21,6 +21,7 @@ export const load: PageLoad = async ({ params }) => {
 
     // build something based on type
     let itemData: itemStructure = {
+        id : id,
         name : "",
         cover : "",
         banner : "",
@@ -65,7 +66,8 @@ export const load: PageLoad = async ({ params }) => {
                     score : review?.review_score,
                     md : md,
                     sub : review.review_sub_name,
-                    date : formattedDate
+                    date : formattedDate,
+                    rewatch : review.review_rewatch
     
                 };
     

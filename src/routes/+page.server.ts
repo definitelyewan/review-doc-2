@@ -20,7 +20,8 @@ export const load: PageLoad = async ({ params }) => {
                 score : review.review_score,
                 md : review.review_md,
                 sub : review.review_sub_name,
-                date : formattedDate
+                date : formattedDate,
+                rewatch : review.review_rewatch
             };
 
             const itemData: itemStructure = {

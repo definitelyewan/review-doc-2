@@ -13,6 +13,7 @@ export interface itemReview {
     md : string | undefined,
     sub : string,
     date : string
+    rewatch : boolean | false
 
 }
 

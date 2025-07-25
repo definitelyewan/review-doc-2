@@ -36,7 +36,8 @@ export async function POST ({ request, url }) {
             review_score: number | undefined,
             review_md: string | undefined,
             review_sub_name: string | undefined,
-            review_date: string | undefined
+            review_date: string | undefined,
+            review_rewatch: boolean | undefined
 
     
         }
@@ -83,6 +84,13 @@ export async function POST ({ request, url }) {
             }
         }
 
+        if (bodyContent.review_rewatch != undefined && bodyContent.review_rewatch != item?.review_rewatch) {
+            sql = await db.query('UPDATE review SET review_rewatch = ? WHERE review_id = ?', [bodyContent.review_rewatch, idn]);
+
+            if (sql?.errno) {
+                throw new Error('Unable to update review_rewatch');
+            }
+        }
 
     } catch (e) {
         const err = e as Error;

@@ -3,7 +3,6 @@ import { error } from '@sveltejs/kit';
 import env from '$lib/server/env';
 import db from '$lib/server/db';
 import fs from 'fs';
-import path from 'path';
 
 
 function findClosestDate(folderPath: string): string | null {

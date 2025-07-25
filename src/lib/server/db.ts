@@ -92,7 +92,8 @@ async function schema() {
                 review_score INT DEFAULT -1,
                 review_md TEXT,
                 review_sub_name TEXT,
-                review_date DATE DEFAULT CURRENT_DATE NOT NULL
+                review_date DATE DEFAULT CURRENT_DATE NOT NULL,
+                review_rewatch BOOLEAN DEFAULT false
             );
         `);
 
@@ -194,7 +195,7 @@ async function fileToDatabase(fileName: string) {
         }
 
         for (let reviewData of parsedData.review) {
-            const sqlReviewInsert = await insertReview(reviewData.review_id, reviewData.item_id, reviewData.review_sub_name, reviewData.review_score, reviewData.review_md, reviewData.review_date);
+            const sqlReviewInsert = await insertReview(reviewData.review_id, reviewData.item_id, reviewData.review_sub_name, reviewData.review_score, reviewData.review_md, reviewData.review_date, reviewData.rewatch);
         
             if (!sqlReviewInsert.success) {
                 throw new Error(sqlReviewInsert.error);
@@ -307,9 +308,10 @@ async function getItem(id: number) {
  * @param reviewScore 
  * @param markDown 
  * @param date 
+ * @param rewatch
  * @returns 
  */
-async function insertReview(id: number, itemId : number, subName : string, reviewScore?: number, markDown?: string, date?: string) {
+async function insertReview(id: number, itemId : number, subName : string, reviewScore?: number, markDown?: string, date?: string, rewatch?: boolean) {
 
     try {
 
@@ -345,6 +347,15 @@ async function insertReview(id: number, itemId : number, subName : string, revie
             if (dateAdd?.errno) {
                 throw new Error("Failed to add date");
             }
+        }
+
+        if (rewatch) {
+            const rewatchAdd = await query("UPDATE review SET review_rewatch = ? WHERE review_id = ?", [rewatch, id]);
+
+            if (rewatchAdd?.errno) {
+                throw new Error("Failed to add rewatch");
+            }
+
         }
 
     } catch (e) {

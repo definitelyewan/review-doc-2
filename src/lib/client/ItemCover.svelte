@@ -8,22 +8,24 @@
 
 <div
     class="rounded-lg outline-2 outline-gray-300 drop-shadow-lg preset-filled-surface-100-900 border-surface-200-800 card-hover divide-surface-200-800 block {width} {height} border-[1px] overflow-visible {scrollState}"
->       
+>   
     {#if id}
-        <a href="/item/{id}" class="relative h-full w-full">
-            {#if rewatch == true}
-                <div class="absolute top-2 left-2 z-10 flex flex-col items-center">
-                    <IconRotateCcw class="size-8 p-1 rounded-full" />
-                    <span class="text-xs text-white mt-1">Rewatch</span>
-                </div>
-            {/if}
+        <a href="/item/{id}">
             <header class="h-full w-full">
                 <img src={cover} class="h-full w-full object-fill" alt="banner" />
             </header>
         </a>
     {:else}
-        <header class="relative h-full w-full">
+        <header class="h-full w-full">
             <img src={cover} class="h-full w-full object-fill" alt="banner" />
         </header>
+    {/if}
+
+    {#if rewatch}
+        <div class="absolute bottom-2 right-2">
+            <div class="p-0.5 flex flex-col items-center justify-center card drop-shadow-lg preset-filled-surface-100-900 border-surface-200-800 card-hover divide-surface-200-800 divide-y overflow-hidden border-[1px]">
+                <IconRotateCcw class="md:size-6 size-2" />
+            </div>
+        </div>
     {/if}
 </div>

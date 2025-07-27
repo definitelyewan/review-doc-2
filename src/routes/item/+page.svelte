@@ -22,7 +22,7 @@
 </script>
 
 <title>Review Doc - Search</title>
-
+<div id="top"></div>
 
 
 <div class="md:mx-32 mx-2 my-2">
@@ -37,39 +37,42 @@
 
 
 <div class="flex w-full p-2 items-center justify-center overflow-x-auto max-w-screen">
-    <div class="md:block hidden">
-        <Pagination
-            data={blocks}
-            {page}
-            onPageChange={(e) => (page = e.page)}
-            pageSize={size}
-            onPageSizeChange={(e) => (size = e.pageSize)}
-            siblingCount={4}
-        >
-            {#snippet labelEllipsis()}<IconEllipsis class="size-4" />{/snippet}
-            {#snippet labelNext()}<IconArrowRight class="size-4" />{/snippet}
-            {#snippet labelPrevious()}<IconArrowLeft class="size-4" />{/snippet}
-            {#snippet labelFirst()}<IconFirst class="size-4" />{/snippet}
-            {#snippet labelLast()}<IconLast class="size-4" />{/snippet}
-        </Pagination>
-    </div>
-    <div class="block md:hidden">
-        <Pagination
-            data={blocks}
-            {page}
-            onPageChange={(e) => (page = e.page)}
-            pageSize={size}
-            onPageSizeChange={(e) => (size = e.pageSize)}
-            siblingCount={4}
-            alternative
-        >
-            {#snippet labelEllipsis()}<IconEllipsis class="size-4" />{/snippet}
-            {#snippet labelNext()}<IconArrowRight class="size-4" />{/snippet}
-            {#snippet labelPrevious()}<IconArrowLeft class="size-4" />{/snippet}
-            {#snippet labelFirst()}<IconFirst class="size-4" />{/snippet}
-            {#snippet labelLast()}<IconLast class="size-4" />{/snippet}
-        </Pagination>
-    </div>
+    <a href="#top">
+        <div class="md:block hidden">
+            <Pagination
+                data={blocks}
+                {page}
+                onPageChange={(e) => (page = e.page)}
+                pageSize={size}
+                onPageSizeChange={(e) => (size = e.pageSize)}
+                siblingCount={4}
+            >
+                {#snippet labelEllipsis()}<IconEllipsis class="size-4" />{/snippet}
+                {#snippet labelNext()}<IconArrowRight class="size-4" />{/snippet}
+                {#snippet labelPrevious()}<IconArrowLeft class="size-4" />{/snippet}
+                {#snippet labelFirst()}<IconFirst class="size-4" />{/snippet}
+                {#snippet labelLast()}<IconLast class="size-4" />{/snippet}
+            </Pagination>
+        </div>
+        <div class="block md:hidden">
+            <Pagination
+                data={blocks}
+                {page}
+                onPageChange={(e) => (page = e.page)}
+                pageSize={size}
+                onPageSizeChange={(e) => (size = e.pageSize)}
+                siblingCount={4}
+                alternative
+            >
+                {#snippet labelEllipsis()}<IconEllipsis class="size-4" />{/snippet}
+                {#snippet labelNext()}<IconArrowRight class="size-4" />{/snippet}
+                {#snippet labelPrevious()}<IconArrowLeft class="size-4" />{/snippet}
+                {#snippet labelFirst()}<IconFirst class="size-4" />{/snippet}
+                {#snippet labelLast()}<IconLast class="size-4" />{/snippet}
+            </Pagination>
+        </div>
+    </a>
+
 </div>
 
 <div class="md:mx-32 mx-2 my-2">
@@ -97,39 +100,41 @@
 </div>
 
 <div class="flex w-full p-2 items-center justify-center overflow-x-auto max-w-screen">
-    <div class="md:block hidden">
-        <Pagination
-            data={blocks}
-            {page}
-            onPageChange={(e) => (page = e.page)}
-            pageSize={size}
-            onPageSizeChange={(e) => (size = e.pageSize)}
-            siblingCount={4}
-        >
-            {#snippet labelEllipsis()}<IconEllipsis class="size-4" />{/snippet}
-            {#snippet labelNext()}<IconArrowRight class="size-4" />{/snippet}
-            {#snippet labelPrevious()}<IconArrowLeft class="size-4" />{/snippet}
-            {#snippet labelFirst()}<IconFirst class="size-4" />{/snippet}
-            {#snippet labelLast()}<IconLast class="size-4" />{/snippet}
-        </Pagination>
-    </div>
-    <div class="block md:hidden">
-        <Pagination
-            data={blocks}
-            {page}
-            onPageChange={(e) => (page = e.page)}
-            pageSize={size}
-            onPageSizeChange={(e) => (size = e.pageSize)}
-            siblingCount={4}
-            alternative
-        >
-            {#snippet labelEllipsis()}<IconEllipsis class="size-4" />{/snippet}
-            {#snippet labelNext()}<IconArrowRight class="size-4" />{/snippet}
-            {#snippet labelPrevious()}<IconArrowLeft class="size-4" />{/snippet}
-            {#snippet labelFirst()}<IconFirst class="size-4" />{/snippet}
-            {#snippet labelLast()}<IconLast class="size-4" />{/snippet}
-        </Pagination>
-    </div>
+    <a href="#top">
+        <div class="md:block hidden">
+            <Pagination
+                data={blocks}
+                {page}
+                onPageChange={(e) => (page = e.page)}
+                pageSize={size}
+                onPageSizeChange={(e) => (size = e.pageSize)}
+                siblingCount={4}
+            >
+                {#snippet labelEllipsis()}<IconEllipsis class="size-4" />{/snippet}
+                {#snippet labelNext()}<IconArrowRight class="size-4" />{/snippet}
+                {#snippet labelPrevious()}<IconArrowLeft class="size-4" />{/snippet}
+                {#snippet labelFirst()}<IconFirst class="size-4" />{/snippet}
+                {#snippet labelLast()}<IconLast class="size-4" />{/snippet}
+            </Pagination>
+        </div>
+        <div class="block md:hidden">
+            <Pagination
+                data={blocks}
+                {page}
+                onPageChange={(e) => (page = e.page)}
+                pageSize={size}
+                onPageSizeChange={(e) => (size = e.pageSize)}
+                siblingCount={4}
+                alternative
+            >
+                {#snippet labelEllipsis()}<IconEllipsis class="size-4" />{/snippet}
+                {#snippet labelNext()}<IconArrowRight class="size-4" />{/snippet}
+                {#snippet labelPrevious()}<IconArrowLeft class="size-4" />{/snippet}
+                {#snippet labelFirst()}<IconFirst class="size-4" />{/snippet}
+                {#snippet labelLast()}<IconLast class="size-4" />{/snippet}
+            </Pagination>
+        </div>
+    </a>
 </div>
 
 

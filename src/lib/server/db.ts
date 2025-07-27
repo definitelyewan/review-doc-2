@@ -120,6 +120,35 @@ async function schema() {
             console.log("award table generated");
         }
 
+        const listSchema = await query(`
+            CREATE TABLE IF NOT EXISTS list (
+                list_id INT AUTO_INCREMENT PRIMARY KEY,
+                list_name TEXT NOT NULL,
+                list_desc TEXT DEFAULT NULL
+            );
+        `);
+
+        if (listSchema?.errno > 0) {
+            throw error("[ERROR] Fatal error generating " + listSchema);
+        } else {
+            console.log("list table generated");
+        }
+
+        const listItemSchema = await query(`
+            CREATE TABLE IF NOT EXISTS list_item (
+                list_id INT,
+                item_id INT,
+                PRIMARY KEY(list_id, item_id),
+                FOREIGN KEY (list_id) REFERENCES list(list_id),
+                FOREIGN KEY (item_id) REFERENCES item(item_id)
+            );
+        `);
+
+        if (listItemSchema?.errno > 0) {
+            throw error("[ERROR] Fatal error generating " + listItemSchema);
+        } else {
+            console.log("list table generated");
+        }
 
     } catch (e) {
         const err = e as Error;

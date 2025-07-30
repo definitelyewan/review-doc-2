@@ -181,7 +181,6 @@ async function toJsonFile() {
 
         for (let tableName of tableNames) {
             let tableData = await query(`SELECT * FROM ${tableName}`);
-            console.log(tableData);
 
             if (tableData?.errno) {
                 console.error("[ERROR] Failed to backup " + tableName);
@@ -191,7 +190,7 @@ async function toJsonFile() {
 
             
         }
-        
+
         await fs.appendFile(`${env.rdBackupDir()}${currentDate}`, JSON.stringify(jsonData), 'utf-8');
 
         return { success: true};

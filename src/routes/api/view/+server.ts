@@ -22,31 +22,39 @@ export async function GET ({ request, url }) {
 
     try {
 
-        let sql: string = '';
+        let statments: string [] = [];
+        let results: object [] = [];
 
         if (type == 'award') {
-            sql = 'SELECT award.* FROM award INNER JOIN item WHERE award.item_id = item.item_id AND item.item_name = ?';
+            statments.push('WITH variable AS (SELECT ? AS search_term) SELECT award.* FROM award INNER JOIN item ON award.item_id = item.item_id WHERE item.item_name = (SELECT search_term FROM variable) OR award.award_name = (SELECT search_term FROM variable)');
         } else if (type == 'item') {
-            sql = 'SELECT * FROM item WHERE item_name = ?';
+            statments.push('SELECT * FROM item WHERE item_name = ?');
         } else if (type == 'review') {
-            sql = 'SELECT review.* FROM review INNER JOIN item WHERE review.item_id = item.item_id AND item.item_name = ?';
-        } else {
+            statments.push('SELECT review.* FROM review INNER JOIN item WHERE review.item_id = item.item_id AND item.item_name = ?');
+        } else if (type == 'list') {
+            statments.push('SELECT * from list WHERE list_name = ?');
+            statments.push('SELECT item.* FROM list INNER JOIN list_item INNER JOIN item WHERE list_name = ? AND list.list_id = list_item.list_id AND list_item.item_id = item.item_id');
+        }else {
             throw new Error("type is for a table that does not exist");
         }
 
+        for (let statment of statments) {
+            const search = await db.query(statment,[term]);
 
-        const search = await db.query(sql,[term]);
+            // FAIL NO MATTER WHAT ON A SINGLE ERROR
+            if (search?.errno) {
+                throw new Error("failed to get anything");
+            }
 
-        if (search?.errno) {
-            throw new Error("failed to get anything");
+            results.push(search);
         }
 
-        return json(search);
+        return json(results);
 
     } catch (e) {
         const err = e as Error;
         console.error(err);
-        error(500, 'unable to find award for item');
+        error(500, 'unable to find viewable items');
     }
 
 };

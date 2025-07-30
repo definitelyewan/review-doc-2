@@ -183,15 +183,14 @@ export async function POST ({ request }) {
     try {
 
         // calculate id
-        const latest = await db.query('SELECT MAX(item_id) AS latest_id FROM item');
-        let newId: number = 1;
+        const latest: number = await db.getMaxTableID("item");
 
-        if (!(latest[0].latest_id == null)) {
-            newId = latest[0].latest_id + 1;
+        if (latest == -1) {
+            throw new Error("Failed to calculate a new ID");
         }
         
 
-        const insert = await db.insertItem(newId, bodyContent.external_id, bodyContent.item_type, bodyContent?.item_cover_overide_url, bodyContent?.item_banner_overide_url, bodyContent?.item_name, bodyContent?.item_date);
+        const insert = await db.insertItem(latest + 1, bodyContent.external_id, bodyContent.item_type, bodyContent?.item_cover_overide_url, bodyContent?.item_banner_overide_url, bodyContent?.item_name, bodyContent?.item_date);
 
         if (!insert.success) {
             throw new Error("Failed insert of external item");

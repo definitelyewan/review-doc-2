@@ -608,7 +608,7 @@ async function getReview(id: number) {
  * @param description 
  * @returns boolean
  */
-async function insertList(id: number, name: string, description: string) {
+async function insertList(id: number, name: string, description?: string) {
     try {
 
         const sqlInsert = await query("INSERT INTO list(list_id, list_name) VALUES(?, ?)", [id, name]);
@@ -640,7 +640,7 @@ async function insertList(id: number, name: string, description: string) {
  * @param itemId 
  * @returns number
  */
-async function insertListItem(listId: number, itemId: number){
+async function insertListItem(listId: number, itemId: number) {
 
     try {
 
@@ -658,6 +658,25 @@ async function insertListItem(listId: number, itemId: number){
 
     return { success: true };
 
+}
+
+/**
+ * returns the current max id in a table. if the table does not exist or it does not contain an id -1 is returned.
+ * @param tableName 
+ * @returns number
+ */
+async function getMaxTableID(tableName: string) {
+
+    const latest = await query(`SELECT MAX(${tableName}_id) AS latest_id FROM ${tableName}`);
+    let newId: number = 1;
+    console.log(latest);
+    if (!(latest[0].latest_id == null)) {
+        newId = latest[0].latest_id;
+    } else {
+        newId = -1;
+    }
+
+    return newId;
 }
 
 export default {
@@ -680,6 +699,7 @@ export default {
     getAward,
     getReview,
     insertList,
-    insertListItem
+    insertListItem,
+    getMaxTableID
 
 };

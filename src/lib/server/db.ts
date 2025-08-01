@@ -669,7 +669,7 @@ async function getMaxTableID(tableName: string) {
 
     const latest = await query(`SELECT MAX(${tableName}_id) AS latest_id FROM ${tableName}`);
     let newId: number = 1;
-    console.log(latest);
+
     if (!(latest[0].latest_id == null)) {
         newId = latest[0].latest_id;
     } else {
@@ -677,6 +677,37 @@ async function getMaxTableID(tableName: string) {
     }
 
     return newId;
+}
+
+/**
+ * returns a list table row
+ * @param id 
+ * @returns 
+ */
+async function getList(id: number) {
+    const list = await query("SELECT * FROM list WHERE list_id = ?", [id]);
+    
+    if (list.length == 0) {
+        return {};
+    }
+
+    return list[0];
+}
+
+async function getListMembers(id: number) {
+    const listMembers = await query("SELECT * FROM list_item WHERE list_id = ?", [id]);
+
+    if (listMembers.length == 0) {
+        return [];
+    }
+
+    let memberIds: number [] = [];
+
+    for (let ids of listMembers) {
+        memberIds.push(ids.item_id);
+    }
+
+    return memberIds;
 }
 
 export default {
@@ -700,6 +731,8 @@ export default {
     getReview,
     insertList,
     insertListItem,
-    getMaxTableID
+    getMaxTableID,
+    getList,
+    getListMembers
 
 };

@@ -40,10 +40,10 @@
             
         </div>
         <div class="md:hidden block">
-            <p>{desc.slice(0, 100) + "..."}</p>
+            <p>{desc.slice(0, 100) + (desc.length > 100 ? "..." : "")}</p>
         </div>
         <div class="md:block hidden">
-            <p>{desc.slice(0, 300) + "..."}</p>
+            <p>{desc.slice(0, 300) + (desc.length > 300 ? "..." : "")}</p>
         </div>
         
     </div>

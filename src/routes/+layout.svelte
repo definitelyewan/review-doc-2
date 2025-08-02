@@ -4,6 +4,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import Search from '@lucide/svelte/icons/search';
 	import Trophy from '@lucide/svelte/icons/trophy';
+	import LayoutList from '@lucide/svelte/icons/layout-list';
 	let { children } = $props();
 
 	/**
@@ -37,6 +38,10 @@
 				<button onclick={(event) => handleSearchClick(event, '/award')} type="button" class="btn preset-filled">
 					<span class="hidden sm:inline">Awards</span>
 					<Trophy size={18} />
+				</button>
+				<button onclick={(event) => handleSearchClick(event, '/list')} type="button" class="btn preset-filled">
+					<span class="hidden sm:inline">Lists</span>
+					<LayoutList size={18} />
 				</button>
 			</div>
 		</div>

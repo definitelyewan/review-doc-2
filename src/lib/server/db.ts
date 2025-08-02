@@ -694,6 +694,11 @@ async function getList(id: number) {
     return list[0];
 }
 
+/**
+ * returns an array of every item id in a list
+ * @param id 
+ * @returns number []
+ */
 async function getListMembers(id: number) {
     const listMembers = await query("SELECT * FROM list_item WHERE list_id = ?", [id]);
 
@@ -709,6 +714,16 @@ async function getListMembers(id: number) {
 
     return memberIds;
 }
+
+/**
+ * returns eveyr list
+ * @returns
+ */
+async function getAllLists () {
+    return await query('SELECT * FROM list');
+
+}
+
 
 export default {
     schema,
@@ -733,6 +748,7 @@ export default {
     insertListItem,
     getMaxTableID,
     getList,
-    getListMembers
+    getListMembers,
+    getAllLists
 
 };

@@ -8,6 +8,13 @@ export interface itemStructure {
     type : string
 }
 
+export interface listStructure {
+    id : number,
+    name : string,
+    desc : string | undefined,
+    items : itemStructure [] | undefined
+}
+
 export interface itemReview {
     score : number | undefined,
     md : string | undefined,

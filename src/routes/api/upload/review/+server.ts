@@ -27,7 +27,7 @@ export async function POST ({ request, url }) {
     }
     
     const reviewContent: reviewContent = await request.json();
-    console.log(reviewContent);
+
     if (!reviewContent.item_id || reviewContent.review_sub_name == undefined) {
         error(400, 'Invalid request body: Missing required fields');
     }

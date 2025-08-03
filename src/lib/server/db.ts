@@ -8,7 +8,7 @@ import env from './env';
 import { error } from 'console';
 
 
-const tableNames: string[] = ["review", "award", "item"];
+const tableNames: string[] = ["list_item", "review", "award", "item", "list"];
 
 // connects to a instance of mariadb using a .env file in the project directory
 
@@ -120,6 +120,35 @@ async function schema() {
             console.log("award table generated");
         }
 
+        const listSchema = await query(`
+            CREATE TABLE IF NOT EXISTS list (
+                list_id INT AUTO_INCREMENT PRIMARY KEY,
+                list_name TEXT NOT NULL,
+                list_desc TEXT DEFAULT NULL
+            );
+        `);
+
+        if (listSchema?.errno > 0) {
+            throw error("[ERROR] Fatal error generating " + listSchema);
+        } else {
+            console.log("list table generated");
+        }
+
+        const listItemSchema = await query(`
+            CREATE TABLE IF NOT EXISTS list_item (
+                list_id INT,
+                item_id INT,
+                PRIMARY KEY(list_id, item_id),
+                FOREIGN KEY (list_id) REFERENCES list(list_id),
+                FOREIGN KEY (item_id) REFERENCES item(item_id)
+            );
+        `);
+
+        if (listItemSchema?.errno > 0) {
+            throw error("[ERROR] Fatal error generating " + listItemSchema);
+        } else {
+            console.log("list_item table generated");
+        }
 
     } catch (e) {
         const err = e as Error;
@@ -148,17 +177,19 @@ async function toJsonFile() {
     }
 
     try {
+        let jsonData: Record<string, any[]> = {};
 
-        let items: [] = await query(`SELECT * FROM item`);
-        let reviews: [] = await query(`SELECT * FROM review`);
-        let awards: [] = await query(`SELECT * FROM award`);
+        for (let tableName of tableNames) {
+            let tableData = await query(`SELECT * FROM ${tableName}`);
 
-        if (items == undefined) {
-            throw new Error('[ERROR] Fatal error items table not backed up');
+            if (tableData?.errno) {
+                console.error("[ERROR] Failed to backup " + tableName);
+            } else {
+                jsonData[tableName] = tableData;
+            }
+
+            
         }
-
-
-        let jsonData = {item: items, review: reviews, award: awards};
 
         await fs.appendFile(`${env.rdBackupDir()}${currentDate}`, JSON.stringify(jsonData), 'utf-8');
 
@@ -207,6 +238,22 @@ async function fileToDatabase(fileName: string) {
             
             if (!sqlAwardInsert.success) {
                 throw new Error(sqlAwardInsert.error);
+            }
+        }
+
+        for (let listData of parsedData.list) {
+            const sqllistInsert = await insertList(listData.list_id, listData.list_name, listData.list_desc);
+            
+            if (!sqllistInsert.success) {
+                throw new Error(sqllistInsert.error);
+            }
+        }
+
+        for (let listItemData of parsedData.list_item) {
+            const sqllistItemInsert = await insertListItem(listItemData.list_id, listItemData.item_id);
+            
+            if (!sqllistItemInsert.success) {
+                throw new Error(sqllistItemInsert.error);
             }
         }
 
@@ -554,6 +601,129 @@ async function getReview(id: number) {
     return item[0];
 }
 
+/**
+ * inserts a list into the database
+ * @param id 
+ * @param name 
+ * @param description 
+ * @returns boolean
+ */
+async function insertList(id: number, name: string, description?: string) {
+    try {
+
+        const sqlInsert = await query("INSERT INTO list(list_id, list_name) VALUES(?, ?)", [id, name]);
+
+        if (description) {
+            const addDesc = await query("UPDATE list SET list_desc = ? WHERE list_id = ?", [description, id]);
+            
+            if (addDesc?.errno) {
+                throw new Error("Failed to add description");
+            }
+        }
+
+        if (sqlInsert?.errno) {
+            throw new Error("Failed to insert into list");
+        }
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+        return { success: false, error: err.message };
+    }
+
+    return { success: true };
+}
+
+/**
+ * Inserts a list id and item id into a junction table
+ * @param listId 
+ * @param itemId 
+ * @returns number
+ */
+async function insertListItem(listId: number, itemId: number) {
+
+    try {
+
+        const sqlInsert = await query("INSERT INTO list_item(list_id, item_id) VALUES(?, ?)", [listId, itemId]);
+
+        if (sqlInsert?.errno) {
+            throw new Error("Failed to insert into list_item");
+        }
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+        return { success: false, error: err.message };
+    }
+
+    return { success: true };
+
+}
+
+/**
+ * returns the current max id in a table. if the table does not exist or it does not contain an id -1 is returned.
+ * @param tableName 
+ * @returns number
+ */
+async function getMaxTableID(tableName: string) {
+
+    const latest = await query(`SELECT MAX(${tableName}_id) AS latest_id FROM ${tableName}`);
+    let newId: number = 1;
+
+    if (!(latest[0].latest_id == null)) {
+        newId = latest[0].latest_id;
+    } else {
+        newId = -1;
+    }
+
+    return newId;
+}
+
+/**
+ * returns a list table row
+ * @param id 
+ * @returns 
+ */
+async function getList(id: number) {
+    const list = await query("SELECT * FROM list WHERE list_id = ?", [id]);
+    
+    if (list.length == 0) {
+        return {};
+    }
+
+    return list[0];
+}
+
+/**
+ * returns an array of every item id in a list
+ * @param id 
+ * @returns number []
+ */
+async function getListMembers(id: number) {
+    const listMembers = await query("SELECT * FROM list_item WHERE list_id = ?", [id]);
+
+    if (listMembers.length == 0) {
+        return [];
+    }
+
+    let memberIds: number [] = [];
+
+    for (let ids of listMembers) {
+        memberIds.push(ids.item_id);
+    }
+
+    return memberIds;
+}
+
+/**
+ * returns eveyr list
+ * @returns
+ */
+async function getAllLists () {
+    return await query('SELECT * FROM list');
+
+}
+
 
 export default {
     schema,
@@ -573,6 +743,12 @@ export default {
     getUniqueAwardYears,
     getAwardsByYear,
     getAward,
-    getReview
+    getReview,
+    insertList,
+    insertListItem,
+    getMaxTableID,
+    getList,
+    getListMembers,
+    getAllLists
 
 };

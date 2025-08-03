@@ -90,7 +90,7 @@ export const load: PageLoad = async ({ params }) => {
     let avgScore = 0.0;
 
     if (item.item_type == 'tv') {
-        avgScore = await db.getItemNameWeightedAvgScore(id)
+        avgScore = await db.getItemNameWeightedAvgScore(id);
     } else {
         avgScore = await db.getItemAvgScore(id);
     }

@@ -34,8 +34,9 @@
     <div class="p-2">
         <div class="flex">
             <p class="md:text-2xl text-xl drop-shadow-lg text-shadow-outline dark:text-white text-[#121212] break-words whitespace-normal"><b>{name}</b></p>
-            <p>{items.length}</p>
-            <ArrowUpRight size=18/>
+            <div class="ml-2 p-0.5 flex flex-col items-center justify-center card drop-shadow-lg preset-filled-surface-100-900 border-surface-200-800 card-hover divide-surface-200-800 divide-y overflow-hidden border-[1px]">
+                {items.length} Items
+            </div>
             
             
         </div>

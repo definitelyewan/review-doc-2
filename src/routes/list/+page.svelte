@@ -13,7 +13,7 @@
         
         {#each blocks as block}
             <a
-                href="{block.id.toString()}"
+                href="/list/{block.id.toString()}"
                 class="w-full md:w-[48%] flex-shrink-0"
             >
                 <ListHeader name={block.name} desc={block.desc} items={block.items}/>

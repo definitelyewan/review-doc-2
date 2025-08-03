@@ -3,7 +3,7 @@
     import ItemCover from '$lib/client/ItemCover.svelte';
     import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right';
 
-    let { name=undefined, desc=undefined, items=[] }: PageProps = $props();
+    let { width="w-full", height="h-full", name=undefined, desc=undefined, items=[], fullDesc=false}: PageProps = $props();
 
     let maxCovers = 3;
     let nCovers = $state((items.length > maxCovers) ? maxCovers : items.length );
@@ -23,8 +23,8 @@
         >
             <ItemCover
                 cover={items[i].cover}
-                width="w-full"
-                height="h-full"
+                width={width}
+                height={height}
                 id={items[i].id}
                 scroll={false}
                 class="w-full h-full object-contain block"
@@ -40,12 +40,16 @@
             
             
         </div>
-        <div class="md:hidden block">
-            <p>{desc.slice(0, 100) + (desc.length > 100 ? "..." : "")}</p>
-        </div>
-        <div class="md:block hidden">
-            <p>{desc.slice(0, 300) + (desc.length > 300 ? "..." : "")}</p>
-        </div>
+        {#if fullDesc == true}
+            <p>{desc}</p>
+        {:else}
+            <div class="md:hidden block">
+                <p>{desc.slice(0, 100) + (desc.length > 100 ? "..." : "")}</p>
+            </div>
+            <div class="md:block hidden">
+                <p>{desc.slice(0, 300) + (desc.length > 300 ? "..." : "")}</p>
+            </div>
+        {/if}
         
     </div>
 </div>

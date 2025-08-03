@@ -12,7 +12,7 @@ export interface listStructure {
     id : number,
     name : string,
     desc : string | undefined,
-    items : itemStructure [] | undefined
+    items : itemStructure []
 }
 
 export interface itemReview {

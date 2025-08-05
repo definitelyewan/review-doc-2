@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { PageProps } from './$types';
     import ItemCover from '$lib/client/ItemCover.svelte';
-    import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right';
 
     let { width="w-full", height="h-full", name=undefined, desc=undefined, items=[], fullDesc=false}: PageProps = $props();
 

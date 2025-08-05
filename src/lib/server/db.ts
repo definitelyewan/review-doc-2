@@ -226,7 +226,13 @@ async function fileToDatabase(fileName: string) {
         }
 
         for (let reviewData of parsedData.review) {
-            const sqlReviewInsert = await insertReview(reviewData.review_id, reviewData.item_id, reviewData.review_sub_name, reviewData.review_score, reviewData.review_md, reviewData.review_date, reviewData.rewatch);
+            const sqlReviewInsert = await insertReview(reviewData.review_id, 
+                                                        reviewData.item_id, 
+                                                        reviewData.review_sub_name, 
+                                                        reviewData.review_score, 
+                                                        reviewData.review_md, 
+                                                        reviewData.review_date, 
+                                                        reviewData.review_rewatch);
         
             if (!sqlReviewInsert.success) {
                 throw new Error(sqlReviewInsert.error);
@@ -396,7 +402,7 @@ async function insertReview(id: number, itemId : number, subName : string, revie
             }
         }
 
-        if (rewatch) {
+        if (rewatch == true) {
             const rewatchAdd = await query("UPDATE review SET review_rewatch = ? WHERE review_id = ?", [rewatch, id]);
 
             if (rewatchAdd?.errno) {

@@ -55,7 +55,13 @@ export async function POST ({ request, url }) {
             reviewContent.review_date = new Date().toISOString().split('T')[0];
         }
 
-        const insert = await db.insertReview(newId, reviewContent.item_id, reviewContent.review_sub_name, reviewContent.review_score, reviewContent.review_md, reviewContent.review_date, reviewContent.review_rewatch);
+        const insert = await db.insertReview(newId, 
+                                            reviewContent.item_id, 
+                                            reviewContent.review_sub_name, 
+                                            reviewContent.review_score, 
+                                            reviewContent.review_md, 
+                                            reviewContent.review_date, 
+                                            reviewContent.review_rewatch);
 
         if (!insert.success) {
             throw new Error(insert?.error);

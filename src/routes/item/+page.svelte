@@ -87,7 +87,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t dark:from-[#121212]/100 dark:to-transparent from-[#fcfcfc]/100 to-transparent z-0"></div>
                 <div class="relative z-10 flex flex-row items-stretch gap-2 h-full">
                     <div class="flex-shrink-0 w-1/3 h-full flex items-center justify-center">
-                        <ItemCover cover={item.url} width="w-full" height="h-full" id={item.id} scroll={false}/>
+                        <ItemCover cover={item.url} width="w-full" height="h-full" href={"/item/" + item.id} scroll={false}/>
                     </div>
                     <div class="flex flex-col justify-center flex-1 min-w-0">
                         <p class="md:text-2xl text-xl drop-shadow-lg text-shadow-outline dark:text-white text-[#121212] break-words whitespace-normal">{item.name}</p>

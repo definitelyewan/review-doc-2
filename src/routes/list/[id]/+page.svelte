@@ -34,7 +34,7 @@
         
         {#each listInfo.items as item}
             <div class="flex flex-shrink-0 w-full items-stretch md:h-68 h-30">
-                <ItemCover height="h-full" width="w-full" cover={item.cover} scroll={false} id={item.id}/>
+                <ItemCover height="h-full" width="w-full" cover={item.cover} scroll={false} href={"/item/" + item.id}/>
             </div>
         {/each}
     </div>

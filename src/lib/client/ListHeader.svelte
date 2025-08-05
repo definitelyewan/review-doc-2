@@ -25,7 +25,6 @@
                 cover={items[i].cover}
                 width={width}
                 height={height}
-                id={items[i].id}
                 scroll={false}
                 class="w-full h-full object-contain block"
             />

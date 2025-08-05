@@ -74,7 +74,7 @@
 
         <div class="flex flex-row md:mx-32 mx-2 mt-4 relative">
             <!-- Card Section -->
-            <ItemCover cover={block.item.cover} id={block.item.id} scroll={true} rewatch={block.review.rewatch}/>
+            <ItemCover cover={block.item.cover} href={"/item/" + block.item.id} scroll={true} rewatch={block.review.rewatch}/>
 
             <!-- Review Container Section -->
             <ReviewBox type={block.item.type} name={block.item.name} subName={block.review.sub} md={block.review.md} score={block.review.score} date={block.review.date}/>

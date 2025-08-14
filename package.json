@@ -40,9 +40,25 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.507.0",
+		"bcrypt": "^6.0.0",
 		"bcryptjs": "^3.0.2",
 		"dotenv": "^16.5.0",
+		"jsonwebtoken": "^9.0.2",
 		"mariadb": "^3.4.2",
-		"marked": "^15.0.11"
-	}
+		"marked": "^15.0.11",
+		"otplib": "^12.0.1"
+	},
+	"description": "- make sure apache/nginx is running - make a rule for the directory in nginx/apache - make a rule for the build folder in systemd so it starts as a service - chmod +x on index.js in build/ - copy node shabang onto index.js in build/ - create a .env file with all required variables - profit",
+	"main": "eslint.config.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/definitelyewan/review-doc-2.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/definitelyewan/review-doc-2/issues"
+	},
+	"homepage": "https://github.com/definitelyewan/review-doc-2#readme"
 }

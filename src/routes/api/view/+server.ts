@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import env from '$lib/server/env';
+import security from '$lib/server/security';
 import db from '$lib/server/db';
 
 
@@ -8,12 +8,17 @@ export async function GET ({ request, url }) {
     * validate the request
     */
 
-    if (request.headers.get('Authorization') == undefined) {
-        error(400, 'Authorization not provided');
-    }
+    try {
+        let valid = security.validateCredential(String(request.headers.get('Authorization')));
+        
+        if (!valid) {
+            throw new Error("Token not valid");
+        }
 
-    if (env.rdAPIKey() !== request.headers.get('Authorization')) {
-        error(400, 'Unauthorized request');
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+        error(400, 'Not authenticated of token timed out');
     }
 
     const term = url.searchParams.get('term');

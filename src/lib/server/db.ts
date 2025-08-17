@@ -730,6 +730,386 @@ async function getAllLists () {
 
 }
 
+/**
+ * Edit the content of an award entry by its id. throws an error if not successful
+ * @param award_id 
+ * @param item_id 
+ * @param award_name 
+ * @param award_year 
+ * @param award_granted 
+ */
+async function editAward(award_id: number, item_id: number | undefined, award_name: string | undefined, award_year: number | undefined, award_granted: boolean | undefined) {
+
+    try{
+
+        // build a query that supports all undefined columns
+        let setStrings: string [] = [];
+        let values: string [] = [];
+        let sql = '';
+
+        if (award_id < 1) {
+            throw new Error("Invalid award id");
+        }
+        
+        let testAward = await getAward(award_id);
+
+        if (testAward?.award_id == undefined) {
+            throw new Error("Invlaid award id");
+        }
+
+        // test item_id
+        if (item_id != undefined) {
+            if (item_id < 1) {
+                throw new Error("Invalid item id");
+            }
+
+            let testItem = await getItem(item_id);
+
+            if (testItem?.item_id == undefined) {
+                throw new Error("Invalid item id");
+            }
+
+            setStrings.push("item_id");
+            values.push(item_id.toString());
+        }
+
+        // test award_name
+        if (award_name != undefined) {
+            setStrings.push("award_name");
+            values.push(award_name);
+        }
+
+        // test award_year
+        if (award_year != undefined) {
+
+            if (award_year < 1000 || award_year > 9999) {
+                throw new Error("Invalid award year");
+            }
+
+            setStrings.push("award_year");
+            values.push(award_year.toString());
+        }
+
+        if (award_granted != undefined) {
+            setStrings.push("award_granted");
+            values.push(award_granted == true ? '1' : '0');
+        }
+
+        
+
+        for (let i = 0; i < setStrings.length; i++) {
+
+            sql = sql + setStrings[i] + " = ?"
+            
+            if (i < setStrings.length - 1) {
+                sql = sql + ', ';
+            }
+
+        }
+
+        if (sql.length == 0) {
+            throw new Error("Noting to update");
+        }
+        
+        values.push(award_id.toString());
+
+        const sqlQuery = await query("UPDATE award SET " + sql + " WHERE award_id = ?", values);
+
+        if (sqlQuery?.errno) {
+            throw new Error("Failed to update award");
+        }
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+        throw err;
+    }
+}
+
+/**
+ * edit the content of an item entry by its id. Throws an error if unsuccessful
+ * @param item_id 
+ * @param external_id 
+ * @param item_cover_overide_url 
+ * @param item_banner_overide_url 
+ * @param item_type 
+ * @param item_name 
+ * @param item_date 
+ */
+async function editItem(item_id: number, external_id: number | undefined, item_cover_overide_url: string | undefined, item_banner_overide_url: string | undefined, item_type: string | undefined, item_name: string | undefined, item_date: string | undefined) {
+    try {
+        
+        // build a query that supports all undefined columns
+        let setStrings: string [] = [];
+        let values: string [] = [];
+        let sql = '';
+
+        if (item_id < 1) {
+            throw new Error("Invalid item id");
+        }
+
+        const testItem = await getItem(item_id);
+
+        if (testItem?.item_id == undefined) {
+            throw new Error("Invalid item id");
+        }
+
+        if (external_id != undefined) {
+            setStrings.push("external_id");
+            values.push(external_id.toString());
+        }
+
+        if (item_banner_overide_url != undefined) {
+            setStrings.push("item_banner_overide_url");
+            values.push(item_banner_overide_url);
+        }
+
+        if (item_cover_overide_url != undefined) {
+            setStrings.push("item_cover_overide_url");
+            values.push(item_cover_overide_url);
+        }
+
+
+        if (item_type != undefined) {
+            if (item_type.length > 6) {
+                throw new Error("Item type too long");
+            }
+
+            setStrings.push("item_type");
+            values.push(item_type);
+        }
+
+        if (item_name != undefined) {
+            setStrings.push("item_name");
+            values.push(item_name);
+        }
+
+        if (item_date != undefined) {
+            const regex = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/;
+
+            if (!regex.test(item_date)) {
+                throw new Error("Invalid date string yyyy-mm-dd");
+            }
+
+            setStrings.push("item_date");
+            values.push(item_date);
+        }
+
+
+        for (let i = 0; i < setStrings.length; i++) {
+
+            sql = sql + setStrings[i] + " = ?"
+            
+            if (i < setStrings.length - 1) {
+                sql = sql + ', ';
+            }
+
+        }
+
+        if (sql.length == 0) {
+            throw new Error("Noting to update");
+        }
+        
+        values.push(item_id.toString());
+
+        const sqlQuery = await query("UPDATE item SET " + sql + " WHERE item_id = ?", values);
+
+        if (sqlQuery?.errno) {
+            throw new Error("Failed to update item");
+        }
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+        throw err;
+    }
+}
+
+/**
+ * edit the content of a review by its id. Throws an error if unseccuessful
+ * @param review_id 
+ * @param item_id 
+ * @param review_score 
+ * @param review_md 
+ * @param review_sub_name 
+ * @param review_date 
+ * @param review_rewatch 
+ */
+async function editReview(review_id: number, item_id: number | undefined, review_score: number | undefined, review_md: string | undefined, review_sub_name: string | undefined, review_date: string | undefined, review_rewatch: boolean | undefined) {
+
+    try {
+        // build a query that supports all undefined columns
+        let setStrings: string [] = [];
+        let values: string [] = [];
+        let sql = '';
+
+        if (review_id < 1) {
+            throw new Error("Invalid review id");
+        }
+
+        const testReview = await getReview(review_id);
+
+        if (testReview?.review_id == undefined) {
+            throw new Error("Invalid review id");
+        }
+
+
+        if (item_id != undefined) {
+            if (item_id < 1) {
+                throw new Error("Invalid item id");
+            }
+
+            setStrings.push("item_id");
+            values.push(item_id.toString());
+        }
+
+        if (review_score != undefined) {
+            setStrings.push("review_score");
+            values.push(review_score.toString());
+        }
+
+        if (review_md != undefined) {
+            setStrings.push("review_md");
+            values.push(review_md);
+        }
+
+        if (review_sub_name != undefined) {
+            setStrings.push("review_sub_name");
+            values.push(review_sub_name);
+        }
+
+        if (review_date != undefined) {
+            const regex = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/;
+
+            if (!regex.test(review_date)) {
+                throw new Error("Invalid date string yyyy-mm-dd");
+            }
+
+            setStrings.push("review_date");
+            values.push(review_date);
+        }
+
+        if (review_rewatch != undefined) {
+            setStrings.push("review_rewatch");
+            values.push(review_rewatch == true ? '1' : '0');
+        }
+        
+        values.push(review_id.toString());
+
+
+        for (let i = 0; i < setStrings.length; i++) {
+
+            sql = sql + setStrings[i] + " = ?"
+            
+            if (i < setStrings.length - 1) {
+                sql = sql + ', ';
+            }
+
+        }
+
+        if (sql.length == 0) {
+            throw new Error("Noting to update");
+        }
+
+        const sqlQuery = await query("UPDATE review SET " + sql + " WHERE review_id = ?", values);
+
+        if (sqlQuery?.errno) {
+            throw new Error("Failed to update award");
+        }
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+        throw err;
+    }
+}
+
+/**
+ * edit the content of a list by its id. Throws an error if unseccuessful
+ * @param list_id 
+ * @param list_name 
+ * @param list_desc 
+ * @param list_item 
+ */
+async function editList(list_id: number, list_name: string | undefined, list_desc: string | undefined, list_item: number [] | undefined) {
+    
+    try{
+
+        let listTest = await getList(list_id);
+
+        if (listTest?.list_id == undefined) {
+            throw new Error("Invalid list id");
+        }
+
+        let setStrings: string [] = [];
+        let values: string [] = [];
+        let sql = '';
+
+        if (list_name != undefined) {
+            setStrings.push("list_name");
+            values.push(list_name);
+        }
+
+        if (list_desc != undefined) {
+            setStrings.push("list_desc");
+            values.push(list_desc);
+        }
+
+        if (list_item != undefined) {
+
+            // test item ids
+
+            for (let id of list_item) {
+                let testItem = await getItem(id);
+
+                if (testItem?.item_id == undefined) {
+                    throw new Error("One of more item ids are not valid");
+                }
+            }
+
+            let listMembers = await getListMembers(list_id);
+
+            for (let listMember of listMembers) {
+                await query("DELETE FROM list_item WHERE list_id = ? AND item_id = ?",[list_id, listMember]);
+            }
+
+            for (let id of list_item) {
+                const insertSql = await insertListItem(list_id, id);
+
+                if (insertSql?.success == false) {
+                    throw new Error("Unable to replace one or more list members");
+                }
+            }
+        }
+        
+        for (let i = 0; i < setStrings.length; i++) {
+
+            sql = sql + setStrings[i] + " = ?"
+            
+            if (i < setStrings.length - 1) {
+                sql = sql + ', ';
+            }
+
+        }
+
+        if (sql.length > 0) {
+            values.push(list_id.toString());
+
+            const sqlQuery = await query("UPDATE list SET " + sql + " WHERE list_id = ?", values);
+
+            if (sqlQuery?.errno) {
+                throw new Error("Failed to update item");
+            }
+        }
+
+
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+        throw err;
+    }
+}
 
 export default {
     schema,
@@ -755,6 +1135,9 @@ export default {
     getMaxTableID,
     getList,
     getListMembers,
-    getAllLists
-
+    getAllLists,
+    editAward,
+    editItem,
+    editReview,
+    editList
 };

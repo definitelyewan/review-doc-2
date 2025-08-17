@@ -48,17 +48,17 @@ export async function POST ({ request, url }) {
      * validate the request
      */
 
-    if (request.headers.get('Authorization') == undefined) {
-        error(400, 'Authorization not provided');
-    }
-
     try {
         let valid = security.validateCredential(String(request.headers.get('Authorization')));
-        console.log(valid);
+        
+        if (!valid) {
+            throw new Error("Token not valid");
+        }
+
     } catch (e) {
         const err = e as Error;
         console.error(err);
-        error(400, 'why : ' + err );
+        error(400, 'Not authenticated of token timed out');
     }
 
 

@@ -58,7 +58,7 @@ export async function POST ({ request, url }) {
     } catch (e) {
         const err = e as Error;
         console.error(err);
-        error(400, 'Not authenticated of token timed out');
+        error(400, 'Not authenticated or token timed out');
     }
 
 

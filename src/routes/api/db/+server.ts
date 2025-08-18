@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
+import security from '$lib/server/security.js';
 import env from '$lib/server/env';
 import db from '$lib/server/db';
 import fs from 'fs';
@@ -47,12 +48,17 @@ export async function POST ({ request, url }) {
      * validate the request
      */
 
-    if (request.headers.get('Authorization') == undefined) {
-        error(400, 'Authorization not provided');
-    }
+    try {
+        let valid = security.validateCredential(String(request.headers.get('Authorization')));
+        
+        if (!valid) {
+            throw new Error("Token not valid");
+        }
 
-    if (env.rdAPIKey() !== request.headers.get('Authorization')) {
-        error(400, 'Unauthorized request');
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+        error(400, 'Not authenticated or token timed out');
     }
 
 

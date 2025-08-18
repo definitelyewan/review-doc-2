@@ -17,6 +17,7 @@ if (!process.env.DB_HOST ||
     !process.env.REVIEW_DOC_BACKUP_DIR || 
     !process.env.REVIEW_DOC_IGDB_CLIENT_ID || 
     !process.env.REVIEW_DOC_IGDB_SECRET_ID || 
+    !process.env.REVIEW_DOC_SEED ||
     !process.env.REVIEW_DOC_TMDB_READ_ACCESS_TOKEN) {
     console.error('Error: One or more required environment variables are missing.');
     process.exit(1);
@@ -113,6 +114,14 @@ function rdTMDBReadAccessToken(): string {
     return String(process.env.REVIEW_DOC_TMDB_READ_ACCESS_TOKEN);
 }
 
+/**
+ * returns the TOTP seed for the system
+ * @returns string
+ */
+function rdSeed(): string {
+    return String(process.env.REVIEW_DOC_SEED);
+}
+
 
 export default {
     dbHost,
@@ -125,5 +134,6 @@ export default {
     rdBackupDir,
     rdIGDBClient,
     rdIGDBSecret,
-    rdTMDBReadAccessToken
+    rdTMDBReadAccessToken,
+    rdSeed
 }

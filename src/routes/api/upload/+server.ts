@@ -213,7 +213,7 @@ export async function POST ({ request, url }) {
                     }
                 }
 
-                const insertSql = await db.insertReview(await db.getMaxTableID('review'), data?.item_id, data?.review_sub_name, data?.review_score, data?.review_md, data?.review_date, data?.review_rewatch);
+                const insertSql = await db.insertReview(await db.getMaxTableID('review') + 1, data?.item_id, data?.review_sub_name, data?.review_score, data?.review_md, data?.review_date, data?.review_rewatch);
 
                 if (insertSql.success == false) {
                     throw new Error("Failed to upload Award");

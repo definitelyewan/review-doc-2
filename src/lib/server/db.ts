@@ -209,7 +209,7 @@ async function toJsonFile() {
 
         await fs.appendFile(`${env.rdBackupDir()}${currentDate}`, JSON.stringify(jsonData), 'utf-8');
 
-        return { success: true};
+        return { success: true };
 
     } catch (e) {
         const err = e as Error;
@@ -276,6 +276,16 @@ async function fileToDatabase(fileName: string) {
             
             if (!sqllistItemInsert.success) {
                 throw new Error(sqllistItemInsert.error);
+            }
+        }
+
+        if (parsedData.link != undefined) {
+            for (let link of parsedData.link) {
+                const sqlLinkInsert = await insertLink(link.item_id_1, link.item_id_2);
+
+                if (!sqlLinkInsert.success) {
+                    throw new Error(sqlLinkInsert.error);
+                }
             }
         }
 
@@ -1155,6 +1165,31 @@ async function getAwardsByItem(id: number) {
     }
 
     return awards
+}
+
+/**
+ * Inserts a new link and returns true on success
+ * @param item_id_1 
+ * @param item_id_2 
+ * @returns boolean
+ */
+async function insertLink(item_id_1: number, item_id_2: number) {
+    
+
+    try {
+        const insertSql = await query("INSERT INTO link(item_id_1, item_id_2) VALUES(?, ?)", [item_id_1, item_id_2]);
+
+        if (insertSql?.errno) {
+            throw new Error("Failed to make link");
+        }
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+        return { success: false, error: err.message };
+
+    }
+
+    return { success: true };
 }
 
 

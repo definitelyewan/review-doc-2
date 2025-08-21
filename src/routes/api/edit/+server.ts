@@ -8,11 +8,11 @@ export async function POST ({ request, url }) {
     */
 
     try {
-        // let valid = security.validateCredential(String(request.headers.get('Authorization')));
+        let valid = security.validateCredential(String(request.headers.get('Authorization')));
         
-        // if (!valid) {
-        //     throw new Error("Token not valid");
-        // }
+        if (!valid) {
+            throw new Error("Token not valid");
+        }
 
     } catch (e) {
         const err = e as Error;

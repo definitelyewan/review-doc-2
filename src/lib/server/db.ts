@@ -6,9 +6,10 @@ import mariadb from 'mariadb';
 import fs from 'fs/promises';
 import env from './env';
 import { error } from 'console';
+import type { itemStructure } from '$lib/types';
 
 
-const tableNames: string[] = ["list_item", "review", "award", "item", "list"];
+const tableNames: string[] = ["link", "list_item", "review", "award", "item", "list"];
 
 // connects to a instance of mariadb using a .env file in the project directory
 
@@ -148,6 +149,21 @@ async function schema() {
             throw error("[ERROR] Fatal error generating " + listItemSchema);
         } else {
             console.log("list_item table generated");
+        }
+
+        const linkSchema = await query(`
+            CREATE TABLE IF NOT EXISTS link (
+                item_id_1 INT,
+                item_id_2 INT,
+                PRIMARY KEY (item_id_1, item_id_2),
+                FOREIGN KEY (item_id_1) REFERENCES item(item_id),
+                FOREIGN KEY (item_id_2) REFERENCES item(item_id)
+            );`);
+
+        if (linkSchema?.errno > 0) {
+            throw error("[ERROR] Fatal error generating " + linkSchema);
+        } else {
+            console.log("link table generated");
         }
 
     } catch (e) {
@@ -1111,6 +1127,37 @@ async function editList(list_id: number, list_name: string | undefined, list_des
     }
 }
 
+/**
+ * Gets all linked items for a particular item id
+ * @param item_id 
+ * @returns []
+ */
+async function getLinkedItems(item_id: number) {
+    const linkedItems = await query("SELECT item.* FROM link INNER JOIN item ON link.item_id_2 = item.item_id WHERE link.item_id_1 = ?", [item_id]);
+    
+    if (linkedItems.length == 0) {
+        return [];
+    }
+
+    return linkedItems;
+}
+
+/**
+ * Gets all awards for an item
+ * @param id 
+ * @returns []
+ */
+async function getAwardsByItem(id: number) {
+    const awards = await query("SELECT * FROM award WHERE item_id = ?", [id]);
+
+    if (awards.length == 0) {
+        return [];
+    }
+
+    return awards
+}
+
+
 export default {
     schema,
     query,
@@ -1139,5 +1186,7 @@ export default {
     editAward,
     editItem,
     editReview,
-    editList
+    editList,
+    getLinkedItems,
+    getAwardsByItem
 };

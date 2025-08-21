@@ -95,5 +95,31 @@ export const load: PageLoad = async ({ params }) => {
         avgScore = await db.getItemAvgScore(id);
     }
 
-    return {itemData, reviewDatas, avgScore};
+    // get links
+    let links: itemStructure [] = [];
+    try {
+
+        const ilinks = await db.getLinkedItems(id);
+
+        if (ilinks.length == 0) {
+            throw new Error("No links skipping...");
+        }
+
+        for (let link of ilinks) {
+            links.push({
+                id: link.item_id,
+                name: link.item_name,
+                cover: link.item_cover_overide_url,
+                banner: link.item_banner_overide_url,
+                release: link.item_date,
+                type: link.item_type
+            });
+        }
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+    }
+    
+    return {itemData, reviewDatas, avgScore, links};
 };

@@ -153,9 +153,9 @@ async function schema() {
 
         const linkSchema = await query(`
             CREATE TABLE IF NOT EXISTS link (
+                link_id INT AUTO_INCREMENT PRIMARY KEY,
                 item_id_1 INT,
                 item_id_2 INT,
-                PRIMARY KEY (item_id_1, item_id_2),
                 FOREIGN KEY (item_id_1) REFERENCES item(item_id),
                 FOREIGN KEY (item_id_2) REFERENCES item(item_id)
             );`);
@@ -281,7 +281,7 @@ async function fileToDatabase(fileName: string) {
 
         if (parsedData.link != undefined) {
             for (let link of parsedData.link) {
-                const sqlLinkInsert = await insertLink(link.item_id_1, link.item_id_2);
+                const sqlLinkInsert = await insertLink(link.link_id, link.item_id_1, link.item_id_2);
 
                 if (!sqlLinkInsert.success) {
                     throw new Error(sqlLinkInsert.error);
@@ -1173,11 +1173,11 @@ async function getAwardsByItem(id: number) {
  * @param item_id_2 
  * @returns boolean
  */
-async function insertLink(item_id_1: number, item_id_2: number) {
+async function insertLink(id: number, item_id_1: number, item_id_2: number) {
     
 
     try {
-        const insertSql = await query("INSERT INTO link(item_id_1, item_id_2) VALUES(?, ?)", [item_id_1, item_id_2]);
+        const insertSql = await query("INSERT INTO link(link_id, item_id_1, item_id_2) VALUES(?, ?, ?)", [id, item_id_1, item_id_2]);
 
         if (insertSql?.errno) {
             throw new Error("Failed to make link");
@@ -1192,6 +1192,91 @@ async function insertLink(item_id_1: number, item_id_2: number) {
     return { success: true };
 }
 
+/**
+ * returns a link row based on its id
+ * @param id 
+ * @returns 
+ */
+async function getLink(id: number) {
+    const item = await query("SELECT * FROM link WHERE link_id = ?", [id]);
+    
+    if (item.length == 0) {
+        return {};
+    }
+
+    return item[0];
+}
+
+async function editLink(id: number, item_id_1: number | undefined, item_id_2: number | undefined) {
+
+    try {
+
+        if (id < 1) {
+            throw new Error("Invalid link id");
+        }
+
+        let testLink = await getLink(id);
+
+        if (testLink?.link_id == undefined) {
+           throw new Error("Invalid link id");
+        }
+
+        let setStrings: string [] = [];
+        let values: string [] = [];
+        let sql = '';
+
+        if (item_id_1 != undefined) {
+
+            testLink = await getItem(item_id_1);
+
+            if (testLink?.item_id == undefined) {
+                throw new Error("Invalid item id");
+            }
+
+            setStrings.push("item_id_1");
+            values.push(item_id_1.toString());
+        }
+
+        if (item_id_2 != undefined) {
+
+            testLink = await getItem(item_id_2);
+
+            if (testLink?.item_id == undefined) {
+                throw new Error("Invalid item id");
+            }
+
+            setStrings.push("item_id_2");
+            values.push(item_id_2.toString());
+        }
+
+        for (let i = 0; i < setStrings.length; i++) {
+
+            sql = sql + setStrings[i] + " = ?"
+            
+            if (i < setStrings.length - 1) {
+                sql = sql + ', ';
+            }
+
+        }
+
+        if (sql.length == 0) {
+            throw new Error("Noting to update");
+        }
+        
+        values.push(id.toString());
+
+        const sqlQuery = await query("UPDATE link SET " + sql + " WHERE link_id = ?", values);
+
+        if (sqlQuery?.errno) {
+            throw new Error("Failed to update award");
+        }
+
+    }  catch (e) {
+        const err = e as Error;
+        console.error(err);
+        throw err;
+    }
+}
 
 export default {
     schema,
@@ -1223,5 +1308,8 @@ export default {
     editReview,
     editList,
     getLinkedItems,
-    getAwardsByItem
+    getAwardsByItem,
+    insertLink,
+    getLink,
+    editLink
 };

@@ -1,10 +1,12 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-    import type { itemStructure, itemReview } from '$lib/types';
+    import type { itemStructure, itemReview, listStructure } from '$lib/types';
     import ReviewBox from '$lib/client/ReviewBox.svelte';
 	import ReviewBar from '$lib/client/ReviewBar.svelte';
+    import ListHeader from '$lib/client/ListHeader.svelte';
     import ItemCover from '$lib/client/ItemCover.svelte';
     import Link from '@lucide/svelte/icons/link';
+    import LayoutList from '@lucide/svelte/icons/layout-list';
 
 	let { data }: PageProps = $props();
 
@@ -12,6 +14,7 @@
 	const itemData: itemStructure = $derived(data.itemData);
     const reviewDatas: itemReview [] = $derived(data.reviewDatas);
     const links: itemStructure [] = $derived(data.links);
+    const lists: listStructure [] = $derived(data.list);
     const avgScore = data.avgScore;
     let preDateString = $state('');
 
@@ -73,7 +76,7 @@
         </div>
         
         {#if links.length > 0}
-            <div id="linkContainer" class="mx-4">
+            <div id="linkContainer" class="mx-4 py-2">
                 <div class="w-full">
                     <div class="flex flex-row">
                         <p class="md:text-3xl text-xl drop-shadow-lg text-shadow-outline dark:text-white text-[#121212]"><b>Related</b></p>
@@ -94,6 +97,33 @@
             </div>
         {/if}
 
+        {#if lists.length > 0}
+
+            <div id="listContainer" class="mx-4 my-2">
+                <div class="w-full">
+                    <div class="flex flex-row">
+                        <p class="md:text-3xl text-xl drop-shadow-lg text-shadow-outline dark:text-white text-[#121212]"><b>Lists</b></p>
+                        <LayoutList class="ml-1 mt-2" size={18}/>
+                    </div>
+
+                    <hr class="hr border-t-2 border-[#121212] dark:border-white shadow-lg mb-2" />
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        {#each lists as list}
+                            <a
+                                href="/list/{list.id.toString()}"
+                                class="w-full flex-shrink-0"
+                            >
+                                <ListHeader name={list.name} desc={list.desc}/>
+                            </a>
+                        {/each}
+
+                    </div>
+                </div>
+            </div>
+        {/if}
+
+
+        
     </div>
 </div>
 

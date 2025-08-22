@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import type { itemStructure, itemReview } from '$lib/types';
+import type { itemStructure, itemReview, listStructure } from '$lib/types';
 import { json, error, redirect } from '@sveltejs/kit';
 import db from '$lib/server/db';
 
@@ -121,5 +121,42 @@ export const load: PageLoad = async ({ params }) => {
         console.error(err);
     }
     
-    return {itemData, reviewDatas, avgScore, links};
+    // get links
+    let list: listStructure [] = [];
+    try {
+
+        const lists = await db.query('SELECT list.* FROM list INNER JOIN list_item WHERE list_item.item_id = ? AND list.list_id = list_item.list_id',[id]);
+        
+        if (lists.length == 0) {
+            throw new Error("No lists skipping...");
+        }
+
+
+        for (let listObj of lists) {
+            
+            const members = await db.getListMembers(listObj.list_id);
+            let listItems: itemStructure[] = [];
+
+            for (let member of members) {
+                let newItem = await db.getItem(member);
+                listItems.push({
+                    id: newItem.item_id,
+                    name: newItem.item_name,
+                    cover: newItem.item_cover_overide_url,
+                    banner: newItem.item_banner_overide_url,
+                    release: newItem.item_date,
+                    type: newItem.item_type
+                });
+            }
+            list.push({id: listObj.list_id, name: listObj.list_name, desc: listObj.list_desc, items: listItems});
+        }
+
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+    }
+    
+
+    return {itemData, reviewDatas, avgScore, links, list};
 };

@@ -1207,6 +1207,12 @@ async function getLink(id: number) {
     return item[0];
 }
 
+/**
+ * edits a pre existing link by its id
+ * @param id 
+ * @param item_id_1 
+ * @param item_id_2 
+ */
 async function editLink(id: number, item_id_1: number | undefined, item_id_2: number | undefined) {
 
     try {

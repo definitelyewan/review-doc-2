@@ -39,6 +39,9 @@ export async function GET ({ request, url }) {
         } else if (type == 'list') {
             statments.push('SELECT * from list WHERE list_name = ?');
             statments.push('SELECT item.* FROM list INNER JOIN list_item INNER JOIN item WHERE list_name = ? AND list.list_id = list_item.list_id AND list_item.item_id = item.item_id');
+        } else if (type == 'link') {
+            statments.push('SELECT item_id_2.* FROM link INNER JOIN item item_id_1 ON link.item_id_1 = item_id_1.item_id INNER JOIN item item_id_2 ON link.item_id_2 = item_id_2.item_id WHERE item_id_1.item_name = ?');
+            statments.push('SELECT link.* FROM link INNER JOIN item ON link.item_id_1 = item.item_id WHERE item.item_name = ?');
         }else {
             throw new Error("type is for a table that does not exist");
         }

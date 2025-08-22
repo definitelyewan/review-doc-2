@@ -26,7 +26,7 @@ export async function POST ({ request, url }) {
 
     try {
         const bodyContents = await request.json();
-        const validTables = ['list','item','award','review'];
+        const validTables = ['list','item','award','review', 'link'];
 
         // check block headers
         for (let bodyContent of bodyContents) {
@@ -75,7 +75,7 @@ export async function POST ({ request, url }) {
                 }
 
             } else if (bodyContent.type == 'item') {
-                
+
                 if (data?.external_id == undefined || data?.item_type == undefined) {
                     throw new Error("Item missing required columns");
                 }
@@ -107,7 +107,7 @@ export async function POST ({ request, url }) {
                         }
                     }
 
-                    const igdbResult = await igdb.searchByID(bodyContent.external_id);
+                    const igdbResult = await igdb.searchByID(data?.external_id);
 
                     if (data?.item_name == undefined) {
                         data.item_name = igdbResult.name;
@@ -218,6 +218,25 @@ export async function POST ({ request, url }) {
                 if (insertSql.success == false) {
                     throw new Error("Failed to upload Award");
                 }
+            } else if (bodyContent.type == 'link') {
+                
+                if (data?.item_id_1 == undefined || data?.item_id_2 == undefined) {
+                    throw new Error("Missing required columns");
+                }
+
+                const id1 = await db.getItem(data?.item_id_1);
+                const id2 = await db.getItem(data?.item_id_2);
+
+                if (id2.item_id == undefined || id1.item_id == undefined) {
+                    throw new Error("One or more invalid items");
+                }
+
+                const insertSql = await db.insertLink(await db.getMaxTableID('link') + 1, data?.item_id_1, data?.item_id_2);
+
+                if (insertSql.success == false) {
+                    throw new Error("Failed to upload Link");
+                }
+
             }
         }
 

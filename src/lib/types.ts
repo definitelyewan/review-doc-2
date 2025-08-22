@@ -15,6 +15,19 @@ export interface listStructure {
     items : itemStructure []
 }
 
+export interface awardStructure {
+    id : number,
+    item : number,
+    name : string,
+    year : number,
+    won: boolean
+
+}
+
+
+
+// future tech debt issue to fix the types below this comment
+
 export interface itemReview {
     score : number | undefined,
     md : string | undefined,

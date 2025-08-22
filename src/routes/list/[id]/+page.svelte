@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { PageProps } from './$types';
-    import ListHeader from '$lib/client/ListHeader.svelte';
     import ReviewBar from '$lib/client/ReviewBar.svelte';
     import ItemCover from '$lib/client/ItemCover.svelte';
 

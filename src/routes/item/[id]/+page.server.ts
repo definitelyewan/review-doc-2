@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import type { itemStructure, itemReview } from '$lib/types';
+import type { itemStructure, itemReview, listStructure, awardStructure } from '$lib/types';
 import { json, error, redirect } from '@sveltejs/kit';
 import db from '$lib/server/db';
 
@@ -95,5 +95,94 @@ export const load: PageLoad = async ({ params }) => {
         avgScore = await db.getItemAvgScore(id);
     }
 
-    return {itemData, reviewDatas, avgScore};
+    // get links
+    let links: itemStructure [] = [];
+    try {
+
+        const ilinks = await db.getLinkedItems(id);
+
+        if (ilinks.length == 0) {
+            throw new Error("No links skipping...");
+        }
+
+        for (let link of ilinks) {
+            links.push({
+                id: link.item_id,
+                name: link.item_name,
+                cover: link.item_cover_overide_url,
+                banner: link.item_banner_overide_url,
+                release: link.item_date,
+                type: link.item_type
+            });
+        }
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+    }
+    
+    // get links
+    let list: listStructure [] = [];
+    try {
+
+        const lists = await db.query('SELECT list.* FROM list INNER JOIN list_item WHERE list_item.item_id = ? AND list.list_id = list_item.list_id',[id]);
+        
+        if (lists.length == 0) {
+            throw new Error("No lists skipping...");
+        }
+
+
+        for (let listObj of lists) {
+            
+            const members = await db.getListMembers(listObj.list_id);
+            let listItems: itemStructure[] = [];
+
+            for (let member of members) {
+                let newItem = await db.getItem(member);
+                listItems.push({
+                    id: newItem.item_id,
+                    name: newItem.item_name,
+                    cover: newItem.item_cover_overide_url,
+                    banner: newItem.item_banner_overide_url,
+                    release: newItem.item_date,
+                    type: newItem.item_type
+                });
+            }
+            list.push({id: listObj.list_id, name: listObj.list_name, desc: listObj.list_desc, items: listItems});
+        }
+
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+    }
+    
+    // get award names
+    let awardData: awardStructure [] = [];
+
+    try {
+
+        let awards = await db.getAwardsByItem(id);
+
+        if (awards.length == 0) {
+            throw new Error("No awards skipping...");
+        }
+
+        for (let award of awards) {
+            awardData.push({
+                id: award.award_id,
+                item: award.item_id,
+                name: award.award_name,
+                year: award.award_year,
+                won: award.award_granted
+            });
+        }
+
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+    }
+
+    return {itemData, reviewDatas, avgScore, links, list, awardData};
 };

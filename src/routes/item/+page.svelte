@@ -7,6 +7,7 @@
     import IconFirst from '@lucide/svelte/icons/chevrons-left';
     import IconLast from '@lucide/svelte/icons/chevron-right';
 	import { Pagination } from '@skeletonlabs/skeleton-svelte';
+    import { Tabs } from '@skeletonlabs/skeleton-svelte';
 
 
 	let { data }: PageProps = $props();

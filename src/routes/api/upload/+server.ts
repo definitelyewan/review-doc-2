@@ -75,7 +75,7 @@ export async function POST ({ request, url }) {
                 }
 
             } else if (bodyContent.type == 'item') {
-                
+
                 if (data?.external_id == undefined || data?.item_type == undefined) {
                     throw new Error("Item missing required columns");
                 }
@@ -107,7 +107,7 @@ export async function POST ({ request, url }) {
                         }
                     }
 
-                    const igdbResult = await igdb.searchByID(bodyContent.external_id);
+                    const igdbResult = await igdb.searchByID(data?.external_id);
 
                     if (data?.item_name == undefined) {
                         data.item_name = igdbResult.name;

@@ -106,6 +106,10 @@ async function searchByID(id: number) {
 
     const result = await query('games',`fields *; where (version_parent = null) & id = ${id};`);
 
+    if (result == undefined) {
+        return {};
+    }
+
     if (result.length == 0) {
         return {};
     }

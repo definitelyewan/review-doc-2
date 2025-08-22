@@ -1,12 +1,15 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-    import type { itemStructure, itemReview, listStructure } from '$lib/types';
+    import type { itemStructure, itemReview, listStructure, awardStructure } from '$lib/types';
     import ReviewBox from '$lib/client/ReviewBox.svelte';
 	import ReviewBar from '$lib/client/ReviewBar.svelte';
     import ListHeader from '$lib/client/ListHeader.svelte';
     import ItemCover from '$lib/client/ItemCover.svelte';
     import Link from '@lucide/svelte/icons/link';
     import LayoutList from '@lucide/svelte/icons/layout-list';
+    import Trophy from '@lucide/svelte/icons/trophy';
+    import Award from '@lucide/svelte/icons/medal';
+	import Medal from '@lucide/svelte/icons/medal';
 
 	let { data }: PageProps = $props();
 
@@ -15,6 +18,8 @@
     const reviewDatas: itemReview [] = $derived(data.reviewDatas);
     const links: itemStructure [] = $derived(data.links);
     const lists: listStructure [] = $derived(data.list);
+    const awards: awardStructure [] = $derived(data.awardData);
+
     const avgScore = data.avgScore;
     let preDateString = $state('');
 
@@ -75,6 +80,39 @@
             {/each}
         </div>
         
+
+        {#if awards.length > 0}
+            <div id="awardContainer" class="mx-4 py-2">
+                <div class="w-full">
+                    <div class="flex flex-row">
+                        <p class="md:text-3xl text-xl drop-shadow-lg text-shadow-outline dark:text-white text-[#121212]"><b>Awards</b></p>
+                        <Trophy class="ml-1 mt-2" size={18}/>
+                        
+                    </div>
+                    <hr class="hr border-t-2 border-[#121212] dark:border-white shadow-lg mb-2" />
+                    <div class="flex flex-wrap gap-4">
+                        {#each awards as award}
+                            <div
+                                id="displayaward"
+                                class="card rounded-lg outline-2 outline-gray-300 drop-shadow-lg preset-filled-surface-100-900 border-surface-200-800 relative w-full overflow-hidden flex flex-row items-stretch gap-2 h-full py-2 {award.won ? '' : 'opacity-60 grayscale'}"
+                            >
+                                <div class="flex-shrink-0 flex items-center justify-center" style="width: 40px; height: 40px;">
+                                    {#if award.won}
+                                        <Trophy size={34}/>
+                                    {:else}
+                                        <Medal size={34}/>
+                                    {/if}
+                                </div>
+                                <div class="flex-1 flex items-center">
+                                    <p class="md:text-xl break-words">{award.year}'s {award.name} {(award.won != true) ? "Nominee" : ""}</p>
+                                </div>
+                            </div>
+                        {/each}
+                    </div>
+                </div>
+            </div>
+        {/if}
+
         {#if links.length > 0}
             <div id="linkContainer" class="mx-4 py-2">
                 <div class="w-full">

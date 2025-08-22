@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import type { itemStructure, itemReview, listStructure } from '$lib/types';
+import type { itemStructure, itemReview, listStructure, awardStructure } from '$lib/types';
 import { json, error, redirect } from '@sveltejs/kit';
 import db from '$lib/server/db';
 
@@ -157,6 +157,32 @@ export const load: PageLoad = async ({ params }) => {
         console.error(err);
     }
     
+    // get award names
+    let awardData: awardStructure [] = [];
 
-    return {itemData, reviewDatas, avgScore, links, list};
+    try {
+
+        let awards = await db.getAwardsByItem(id);
+
+        if (awards.length == 0) {
+            throw new Error("No awards skipping...");
+        }
+
+        for (let award of awards) {
+            awardData.push({
+                id: award.award_id,
+                item: award.item_id,
+                name: award.award_name,
+                year: award.award_year,
+                won: award.award_granted
+            });
+        }
+
+
+    } catch (e) {
+        const err = e as Error;
+        console.error(err);
+    }
+
+    return {itemData, reviewDatas, avgScore, links, list, awardData};
 };

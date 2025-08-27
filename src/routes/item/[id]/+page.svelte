@@ -19,8 +19,8 @@
     const links: itemStructure [] = $derived(data.links);
     const lists: listStructure [] = $derived(data.list);
     const awards: awardStructure [] = $derived(data.awardData);
+    const avgScore = $derived(data.avgScore);
 
-    const avgScore = data.avgScore;
     let preDateString = $state('');
 
     $effect(() => {
